@@ -1,12 +1,12 @@
 package com.example.kek.locatoralpha2;
 
 import android.app.Activity;
-import android.app.Application;
-import android.app.Fragment;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,30 +16,28 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
- * Created by kek on 08.03.2017.
+ * Created by kek on 20.03.2017.
  */
 
-public class wifiFrag extends Fragment{
-    private Element [] nets;
+public class Wifi extends AppCompatActivity {
+
+    private static Element [] nets;
     private WifiManager wifiManager;
     private List<ScanResult> wifiList;
-    View RootView;
+    public static View RootView;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        RootView = inflater.inflate(R.layout.wifi_fragment,container, false);
-        //this.wifiList = (TextView) RootView.findViewById(R.id.wifiLV);
-        return RootView;
+    public void wifi(){
+
     }
     public void detectWifi(){
         LayoutInflater inflater;
-        this.wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+        this.wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         this.wifiManager.startScan();
         this.wifiList = this.wifiManager.getScanResults();
 
-         this.nets = new Element[wifiList.size()];
+        this.nets = new Element[wifiList.size()];
         for(int i = 0; i<wifiList.size(); i++){
             String item = wifiList.get(i).toString();
             String vector_item[] = item.split(",");
@@ -52,19 +50,28 @@ public class wifiFrag extends Fragment{
             nets[i] = new Element(ssid,security,level);
         }
 
-
-        AdapterElements adapterElements = new AdapterElements(getActivity()); //НАДО ЗАТРАИТЬ
+        //TODO:: переделать этот участок по человеески, красиво дорого богато.
+        //WifiFrag.AdapterElements adapterElements = new WifiFrag.AdapterElements(this); //НАДО ЗАТРАИТЬ
         //Было AdapterElements adapterElements = new AdapterElements(this);
         //Аргумент должен заходить activity.
+        AdapterElements adapterElements = new AdapterElements(this);
         ListView netList = (ListView)RootView.findViewById(R.id.wifiLV);
         netList.setAdapter(adapterElements);
     }
 
+    public static class WifiFrag extends android.app.Fragment{
 
+        public static WifiFrag newInstance(){
 
+            return null;
+        }
 
-
-
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+            RootView = inflater.inflate(R.layout.wifi_fragment,container, false);
+            //this.wifiList = (TextView) RootView.findViewById(R.id.wifiLV);
+            return RootView;
+        }
+    }
     class AdapterElements extends ArrayAdapter<Object> {
         Activity context;
 
@@ -73,9 +80,9 @@ public class wifiFrag extends Fragment{
             this.context = context;
         }
 
-
         public View getView(int position, View convetrView, ViewGroup parent){
             LayoutInflater inflater = context.getLayoutInflater();
+
             View item = inflater.inflate(R.layout.items, null);
 
             TextView tvSsid = (TextView)item.findViewById(R.id.textViewSSID);
@@ -100,5 +107,6 @@ public class wifiFrag extends Fragment{
             }
             return item;
         }
+
     }
 }
